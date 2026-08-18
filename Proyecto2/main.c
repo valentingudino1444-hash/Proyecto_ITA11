@@ -73,3 +73,27 @@ int main(void) {
         // --- C) CONTROL PROPORCIONAL ---
         float error = T_set - T_real;
         if (error < 0) error = 0;
+float pwm_flotante = Kp * error;
+        if (pwm_flotante > PWM_MAX_DUTY) pwm_flotante = PWM_MAX_DUTY;
+
+        // --- D) ACTUADOR (Tren de ondas a 1 Hz) ---
+        PWM_Ajustar_Foco((uint32_t)pwm_flotante);
+
+        // --- E) PANTALLA LCD ---
+        sprintf(buffer_lcd, "Set : %.1f C   ", T_set);
+        Pantalla_Cursor(0, 0);
+        Pantalla_Cadena(buffer_lcd);
+
+        sprintf(buffer_lcd, "Real: %.1f C   ", T_real);
+        Pantalla_Cursor(1, 0);
+        Pantalla_Cadena(buffer_lcd);
+
+        // --- F) SALIDA FTDI / HERCULES ---
+        sprintf(buffer_serial, "Temperatura Set: %.1f C | Temperatura Real: %.1f C | PWM: %lu\r\n", T_set, T_real, (uint32_t)pwm_flotante);
+        Comunicacion_EnviarCadena(buffer_serial);
+
+        // También lo mandamos a la consola ITM de CubeIDE
+        printf("%s", buffer_serial);
+
+        Delay_ms(250);
+    }
