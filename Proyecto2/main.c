@@ -1,7 +1,7 @@
 #include <stdio.h> // Se incluye la librería estándar de entrada y salida para el manejo de flujos de datos.
 #include <stdint.h> // Se incluye la librería de tipos de datos enteros de tamaño fijo.
 #include "sensores.h" // Se incluye la librería desarrollada por Diego para la gestión del conversor analógico-digital.
-#include "Actuadores.h" // Se incluye la librería encargada del control de PWM y actuadores de potencia.
+#include "actuadores.h" // Se incluye la librería encargada del control de PWM y actuadores de potencia.
 #include "pantalla.h" // Se incluye la librería responsable de la interfaz gráfica en la pantalla LCD.
 #include "comunicacion.h" // Se incluye la librería orientada a la transmisión de datos por comunicación serial UART.
 
