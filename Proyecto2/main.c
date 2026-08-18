@@ -48,3 +48,28 @@ int main(void) {
 
     printf("--- Control de Incubadora Iniciado ---\r\n");
     Comunicacion_EnviarCadena("--- Sistema de Incubadora STM32 Iniciado ---\r\n");
+
+  Pantalla_Cursor(0, 0);
+    Pantalla_Cadena("Iniciando...");
+    Delay_ms(1500);
+    Pantalla_Limpiar();
+
+    float Kp = 50.0f; // Ganancia para el control del TRIAC
+
+    // --- BUFFERS AMPLIADOS PARA EVITAR DESBORDAMIENTOS ---
+    char buffer_lcd[32];    // Sobrado para los 16 caracteres de la pantalla
+    char buffer_serial[128]; // ¡AQUÍ ESTÁ LA SOLUCIÓN! Sobrado para la cadena larga de PC
+
+    while (1) {
+        // --- A) LECTURA (En los pines PA4 y PA5) ---
+        uint16_t adc_pot = ADC_Leer_Canal(4);  // PA4 (Set-Point)
+        uint16_t adc_lm35 = ADC_Leer_Canal(5); // PA5 (Sensor LM35 simulado)
+
+        // --- B) PROCESAMIENTO ---
+        float T_set = 20.0f + ((float)adc_pot / 4095.0f) * 40.0f; // Mapeo de 20 C a 60 C
+        float voltaje_lm35 = ((float)adc_lm35 * 3.3f) / 4095.0f;
+        float T_real = voltaje_lm35 * 100.0f; // Mapeo de 0 C a 330 C
+
+        // --- C) CONTROL PROPORCIONAL ---
+        float error = T_set - T_real;
+        if (error < 0) error = 0;
