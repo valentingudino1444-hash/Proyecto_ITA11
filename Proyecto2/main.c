@@ -28,3 +28,23 @@ void Delay_ms(uint32_t ms) {
         __asm("nop"); // Se inserta una instrucción ensambladora sin operación para consumir ciclos de reloj.
     }
 }
+
+
+
+int main(void) {
+    // Acelera la tarjeta a 168 MHz para que el UART y los retardos cuadren
+    SystemClock_Config_168MHz();
+
+    // 1. Habilitar cálculos matemáticos de hardware (FPU)
+    SCB_CPACR |= (0xF << 20);
+    __asm volatile ("dsb");
+    __asm volatile ("isb");
+
+    // 2. Inicialización General de Módulos
+    Sensores_Init();
+    Actuador_PWM_Init();
+    Pantalla_Init();
+    Comunicacion_Init();
+
+    printf("--- Control de Incubadora Iniciado ---\r\n");
+    Comunicacion_EnviarCadena("--- Sistema de Incubadora STM32 Iniciado ---\r\n");
